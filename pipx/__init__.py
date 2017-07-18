@@ -1,8 +1,8 @@
 from pip.commands import InstallCommand, UninstallCommand
-import yaml
+from yaml import load, dump
 import sys
 
-command_map = {"install": InstallCommand, "uninstall": UninstallCommand}
+PROJECT_FILE = "project.yml"
 
 def add_dependency(pkg, dev=False):
 	pass
@@ -10,15 +10,21 @@ def add_dependency(pkg, dev=False):
 def remove_dependency(pkg):
 	pass
 
-def install(args):
+def install(pkgs, update=False):
 	c = InstallCommand()
-	if c.main(args) == 0:
-		add_dependency()
+	for pkg in pkgs:
+		args = [pkg]
+		if update:
+			args.append("--upgrade")
 
-def uninstall(args):
+		if c.main(args) == 0:
+			add_dependency(pkg)
+
+def uninstall(pkgs):
 	c = UninstallCommand()
-	if c.main(args) == 0:
-		remove_dependency()
+	for pkg in pkgs:
+		if c.main(pkg) == 0:
+			remove_dependency(pkg)
 
 def main():
 	args = sys.argv[1:]
@@ -27,6 +33,8 @@ def main():
 		install(args)
 	elif command == "uninstall":
 		uninstall(args)
+	elif command == "update":
+		install(args, update=True)
 	else:
 		raise Exception("Unknown command '{}'".format(command))
 
