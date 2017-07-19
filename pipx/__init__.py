@@ -2,7 +2,10 @@ from pip.commands import InstallCommand, UninstallCommand
 from yaml import load, dump
 import sys
 
-PROJECT_FILE = "project.yml"
+def update_project_file(data):
+	f = open("project.yaml", "w")
+	f.write(dump(data, default_flow_style=False))
+	f.close()
 
 def add_dependency(pkg, dev=False):
 	pass
@@ -26,16 +29,40 @@ def uninstall(pkgs):
 		if c.main(pkg) == 0:
 			remove_dependency(pkg)
 
+def update(pkgs):
+	install(pkgs, update=True)
+
+def init(pkgs):
+	to_ask = \
+			{ "name": {"label": "Name", "default": None}
+			, "description": {"label": "Description", "default": None}
+			, "version": {"label": "Version", "default": "0.0.0"}
+			}
+	to_dump = {}
+	for key, value in to_ask.items():
+		default = value["default"]
+		if default:
+			to_dump[key] = input("{} ({}): ".format(value["label"], default)) or default
+		else:
+			to_dump[key] = input("{}: ".format(value["label"]))
+
+
+	update_project_file(to_dump)
+	
+
+COMMAND_MAP = \
+		{ "install": install
+		, "uninstall": uninstall
+		, "update": update
+		, "init": init
+		}
+
 def main():
 	args = sys.argv[1:]
 	command = args.pop(0)
-	if command == "install":
-		install(args)
-	elif command == "uninstall":
-		uninstall(args)
-	elif command == "update":
-		install(args, update=True)
-	else:
+	try:
+		COMMAND_MAP[command](args)
+	except KeyError:
 		raise Exception("Unknown command '{}'".format(command))
 
 if __name__ == "__main__":
