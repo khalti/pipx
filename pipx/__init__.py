@@ -1,8 +1,15 @@
-from pip.commands import InstallCommand, UninstallCommand
-from yaml import load, dump
 import sys
+import re
+
+from pip.commands import InstallCommand, UninstallCommand
+from pip.commands.show import search_packages_info
+from yaml import load, dump
 
 PROJECT_FILE="project.yaml"
+
+def get_version(pkg):
+	for i, dist in enumerate(search_packages_info([pkg])):
+		return dist.get("version")
 
 def update_project_file(data):
 	f = open(PROJECT_FILE, "w")
@@ -17,12 +24,13 @@ def read_project_file():
 
 def register_dependency(pkg, dev=False):
 	key = None
+	deregister_dependency(pkg)
 	data = read_project_file()
 	if dev:
 		key = "dev-dependencies"
 	else:
 		key = "dependencies"
-	data[key][pkg] = "installed"
+	data[key][pkg] = get_version(pkg)
 	update_project_file(data)
 
 def deregister_dependency(pkg):
