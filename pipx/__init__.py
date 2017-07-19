@@ -2,32 +2,59 @@ from pip.commands import InstallCommand, UninstallCommand
 from yaml import load, dump
 import sys
 
+PROJECT_FILE="project.yaml"
+
 def update_project_file(data):
-	f = open("project.yaml", "w")
+	f = open(PROJECT_FILE, "w")
 	f.write(dump(data, default_flow_style=False))
 	f.close()
 
-def add_dependency(pkg, dev=False):
-	pass
+def read_project_file():
+	f = open(PROJECT_FILE, "r") 
+	data = f.read()
+	f.close()
+	return load(data)
 
-def remove_dependency(pkg):
-	pass
+def register_dependency(pkg, dev=False):
+	key = None
+	data = read_project_file()
+	if dev:
+		key = "dev-dependencies"
+	else:
+		key = "dependencies"
+	data[key][pkg] = "installed"
+	update_project_file(data)
+
+def deregister_dependency(pkg):
+	data = read_project_file()
+	keys = ["dependencies", "dev-dependencies"]
+	for key in keys:
+		try:
+			data[key].pop(pkg)
+		except KeyError:
+			continue
+	update_project_file(data)
 
 def install(pkgs, update=False):
+	dev = False
+	if "-d" in pkgs or "--dev" in pkgs:
+		dev = True
 	c = InstallCommand()
 	for pkg in pkgs:
+		if pkg in ["-d", "--dev"]:
+			continue
 		args = [pkg]
 		if update:
 			args.append("--upgrade")
 
 		if c.main(args) == 0:
-			add_dependency(pkg)
+			register_dependency(pkg, dev=dev)
 
 def uninstall(pkgs):
 	c = UninstallCommand()
 	for pkg in pkgs:
-		if c.main(pkg) == 0:
-			remove_dependency(pkg)
+		if c.main([pkg]) == 0:
+			deregister_dependency(pkg)
 
 def update(pkgs):
 	install(pkgs, update=True)
@@ -47,6 +74,8 @@ def init(pkgs):
 			to_dump[key] = input("{}: ".format(value["label"]))
 
 
+	to_dump["dependencies"] = {}
+	to_dump["dev-dependencies"] = {}
 	update_project_file(to_dump)
 	
 
