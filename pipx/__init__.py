@@ -6,6 +6,7 @@ from pip.commands.show import search_packages_info
 from yaml import load, dump
 
 PROJECT_FILE="project.yaml"
+DEFAULT_STRUCT = {"dependencies": {}, "dev-dependencies": {}}
 
 def get_version(pkg):
 	for i, dist in enumerate(search_packages_info([pkg])):
@@ -19,9 +20,12 @@ def update_project_file(data):
 	f.close()
 
 def read_project_file():
-	f = open(PROJECT_FILE, "r") 
+	f = open(PROJECT_FILE, "w+") 
 	data = f.read()
 	f.close()
+
+	if not data:
+		return DEFAULT_STRUCT
 	return load(data)
 
 def register_dependency(pkg, dev=False):
@@ -69,24 +73,24 @@ def uninstall(pkgs):
 def update(pkgs):
 	install(pkgs, update=True)
 
-def init(pkgs):
-	to_ask = \
-			{ "name": {"label": "Name", "default": None}
-			, "description": {"label": "Description", "default": None}
-			, "version": {"label": "Version", "default": "0.0.0"}
-			}
-	to_dump = {}
-	for key, value in to_ask.items():
-		default = value["default"]
-		if default:
-			to_dump[key] = input("{} ({}): ".format(value["label"], default)) or default
-		else:
-			to_dump[key] = input("{}: ".format(value["label"]))
+# def init(pkgs):
+# 	to_ask = \
+# 			{ "name": {"label": "Name", "default": None}
+# 			, "description": {"label": "Description", "default": None}
+# 			, "version": {"label": "Version", "default": "0.0.0"}
+# 			}
+# 	to_dump = {}
+# 	for key, value in to_ask.items():
+# 		default = value["default"]
+# 		if default:
+# 			to_dump[key] = input("{} ({}): ".format(value["label"], default)) or default
+# 		else:
+# 			to_dump[key] = input("{}: ".format(value["label"]))
 
 
-	to_dump["dependencies"] = {}
-	to_dump["dev-dependencies"] = {}
-	update_project_file(to_dump)
+# 	to_dump["dependencies"] = {}
+# 	to_dump["dev-dependencies"] = {}
+# 	update_project_file(to_dump)
 
 def setup(args, dev=False):
 	keys = ["dependencies"]
@@ -103,7 +107,7 @@ COMMAND_MAP = \
 		{ "install": install
 		, "uninstall": uninstall
 		, "update": update
-		, "init": init
+		# , "init": init
 		, "setup": setup
 		}
 
