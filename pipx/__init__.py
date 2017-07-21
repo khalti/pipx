@@ -9,7 +9,9 @@ PROJECT_FILE="project.yaml"
 
 def get_version(pkg):
 	for i, dist in enumerate(search_packages_info([pkg])):
-		return dist.get("version")
+		version = dist.get("version")
+		if version:
+			return version
 
 def update_project_file(data):
 	f = open(PROJECT_FILE, "w")
@@ -43,7 +45,7 @@ def deregister_dependency(pkg):
 			continue
 	update_project_file(data)
 
-def install(pkgs, update=False):
+def install(pkgs, update=False, register=True):
 	dev = False
 	if "-d" in pkgs or "--dev" in pkgs:
 		dev = True
@@ -55,7 +57,7 @@ def install(pkgs, update=False):
 		if update:
 			args.append("--upgrade")
 
-		if c.main(args) == 0:
+		if c.main(args) == 0 and register:
 			register_dependency(pkg, dev=dev)
 
 def uninstall(pkgs):
@@ -85,13 +87,24 @@ def init(pkgs):
 	to_dump["dependencies"] = {}
 	to_dump["dev-dependencies"] = {}
 	update_project_file(to_dump)
-	
+
+def setup(args, dev=False):
+	keys = ["dependencies"]
+	if "-d" in args or "--dev" in args:
+		keys.append("dev-dependencies")
+
+	data = read_project_file()
+	for key in keys:
+		for pkg in data[key]:
+			install([pkg], register=False)
+
 
 COMMAND_MAP = \
 		{ "install": install
 		, "uninstall": uninstall
 		, "update": update
 		, "init": init
+		, "setup": setup
 		}
 
 def main():
