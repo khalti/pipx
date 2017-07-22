@@ -1,11 +1,11 @@
 import sys
 import re
+import json
 
 from pip.commands import InstallCommand, UninstallCommand
 from pip.commands.show import search_packages_info
-from yaml import load, dump
 
-PROJECT_FILE="project.yaml"
+PROJECT_FILE="project.json"
 DEFAULT_STRUCT = {"dependencies": {}, "dev-dependencies": {}}
 
 def get_version(pkg):
@@ -16,7 +16,7 @@ def get_version(pkg):
 
 def update_project_file(data):
 	f = open(PROJECT_FILE, "w")
-	f.write(dump(data, default_flow_style=False))
+	f.write(json.dumps(data, indent=2))
 	f.close()
 
 def read_project_file():
@@ -26,7 +26,7 @@ def read_project_file():
 
 	if not data:
 		return DEFAULT_STRUCT
-	return load(data)
+	return json.loads(data)
 
 def register_dependency(pkg, dev=False):
 	key = None

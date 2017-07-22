@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "pip": "9.0.1"
+  },
+  "dev-dependencies": {}
+}
