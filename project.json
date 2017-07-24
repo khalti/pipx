@@ -1,16 +1,29 @@
 {
-	"name": "pipx",
-	"description": "pip extended",
-	"version": "0.1.0",
-	"author": "ludbek",
-	"author_email": "sth.srn@gmail.com",
-	"url": "",
-	"long_description": "readme.md",
-	"license": "license.txt",
-	"packages": {
-		"include": ["pipx"],
-		"exclude": ["tests"]
-	},
-	"dependencies": [],
-	"dev-dependencies": []
+  "description": "pip extended",
+  "entry_points": {
+    "console_scripts": [
+      "pipx=pipx:main"
+    ]
+  },
+  "url": "",
+  "dependencies": [
+    "pip==9.0.1",
+    "webpreview==None"
+  ],
+  "author": "ludbek",
+  "dev-dependencies": [],
+  "long_description": "readme.md",
+  "author_email": "sth.srn@gmail.com",
+  "version": "0.1.0",
+  "keywords": "pip",
+  "license": "license.txt",
+  "name": "pipx",
+  "packages": {
+    "exclude": [
+      "tests"
+    ],
+    "include": [
+      "pipx"
+    ]
+  }
 }

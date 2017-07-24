@@ -25,6 +25,7 @@ MINIMUM_PROJECT_INFO = \
 
 def get_version(pkg):
 	for i, dist in enumerate(search_packages_info([pkg])):
+		print(dist)
 		version = dist.get("version")
 		if version:
 			return version
@@ -48,7 +49,7 @@ def register_dependency(pkg, dev=False):
 		key = "dev-dependencies"
 	else:
 		key = "dependencies"
-	data[key][pkg] = get_version(pkg)
+	data[key].append("{}=={}".format(pkg, get_version(pkg)))
 	update_project_file(data)
 
 def deregister_dependency(pkg):
@@ -56,8 +57,9 @@ def deregister_dependency(pkg):
 	keys = ["dependencies", "dev-dependencies"]
 	for key in keys:
 		try:
-			data[key].pop(pkg)
-		except KeyError:
+			index = [i for i, item in enumerate(data[key]) if re.search(r'^{}[=><]'.format(pkg), item)][0]
+			data[key].pop(index)
+		except (ValueError, IndexError):
 			continue
 	update_project_file(data)
 
