@@ -1,6 +1,16 @@
 {
-  "dependencies": {
-    "pip": "9.0.1"
-  },
-  "dev-dependencies": {}
+	"name": "pipx",
+	"description": "pip extended",
+	"version": "0.1.0",
+	"author": "ludbek",
+	"author_email": "sth.srn@gmail.com",
+	"url": "",
+	"long_description": "readme.md",
+	"license": "license.txt",
+	"packages": {
+		"include": ["pipx"],
+		"exclude": ["tests"]
+	},
+	"dependencies": [],
+	"dev-dependencies": []
 }
