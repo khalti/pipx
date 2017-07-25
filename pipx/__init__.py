@@ -4,7 +4,7 @@ import json
 
 from setuptools import find_packages
 from pip.commands import InstallCommand, UninstallCommand
-from pip.commands.show import search_packages_info
+from pkg_resources import get_distribution
 
 # pip.main(["install", "--upgrade", "--no-index", "--find-links=.", package])
 
@@ -24,11 +24,7 @@ MINIMUM_PROJECT_INFO = \
 	]
 
 def get_version(pkg):
-	for i, dist in enumerate(search_packages_info([pkg])):
-		print(dist)
-		version = dist.get("version")
-		if version:
-			return version
+	return get_distribution(pkg).version
 
 def update_project_file(data):
 	f = open(PROJECT_FILE, "w")
@@ -151,5 +147,8 @@ def gen_setup_kwargs():
 			# ( include=packages_data.get("include", [])
 			# , exclude=packages_data.get("exclude", [])
 			# )
+
+	# pop keys unrecognized by setuptools
+	data.pop("dev-dependencies")
 
 	return data
