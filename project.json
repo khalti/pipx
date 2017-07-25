@@ -1,28 +1,7 @@
 {
-  "keywords": "pip",
-  "version": "0.1.0",
-  "packages": {
-    "include": [
-      "pipx"
-    ],
-    "exclude": [
-      "tests"
-    ]
-  },
-  "url": "",
-  "entry_points": {
-    "console_scripts": [
-      "pipx=pipx:main"
-    ]
-  },
-  "description": "pip extended",
-  "dependencies": [
-    "pip==9.0.1"
-  ],
   "dev-dependencies": [],
-  "long_description": "readme.md",
-  "name": "pipx",
-  "license": "license.txt",
-  "author_email": "sth.srn@gmail.com",
-  "author": "ludbek"
+  "dependencies": [
+    "pip==9.0.1",
+    "django==1.11.3"
+  ]
 }

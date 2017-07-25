@@ -10,18 +10,7 @@ from pkg_resources import get_distribution
 
 
 PROJECT_FILE="project.json"
-DEFAULT_STRUCT = {"dependencies": {}, "dev-dependencies": {}}
-MINIMUM_PROJECT_INFO = \
-	[ "name"
-	, "description"
-	, "version"
-	, "url"
-	, "author"
-	, "author_email"
-	, "version"
-	, "packages"
-	, "license"
-	]
+DEFAULT_STRUCT = {"dependencies": [], "dev-dependencies": []}
 
 def get_version(pkg):
 	return get_distribution(pkg).version
@@ -32,9 +21,16 @@ def update_project_file(data):
 	f.close()
 
 def read_project_file():
-	f = open(PROJECT_FILE, "r") 
-	data = f.read()
-	f.close()
+	try:
+		f = open(PROJECT_FILE, "r") 
+		data = f.read()
+		f.close()
+	except FileNotFoundError:
+		update_project_file(DEFAULT_STRUCT)
+		return read_project_file()
+
+	if not data:
+		return DEFAULT_STRUCT
 	return json.loads(data)
 
 def register_dependency(pkg, dev=False):
@@ -128,27 +124,3 @@ def main():
 		COMMAND_MAP[command](args)
 	except KeyError:
 		raise Exception("Unknown command '{}'".format(command))
-
-def _read_file(filename):
-	f = open(filename, "r")
-	data = f.read()
-	f.close()
-	return data
-
-def gen_setup_kwargs():
-	data = read_project_file()
-
-	data["long_description"] = _read_file(data["long_description"])
-	data["license"] = _read_file(data["license"])
-	data["install_requires"] = data.pop("dependencies")
-
-	packages_data = data["packages"]
-	data["packages"] = find_packages()
-			# ( include=packages_data.get("include", [])
-			# , exclude=packages_data.get("exclude", [])
-			# )
-
-	# pop keys unrecognized by setuptools
-	data.pop("dev-dependencies")
-
-	return data
