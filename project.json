@@ -1,7 +1,6 @@
 {
   "dev-dependencies": [],
   "dependencies": [
-    "pip==9.0.1",
-    "django==1.11.3"
+    "pip==9.0.1"
   ]
 }

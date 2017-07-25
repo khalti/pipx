@@ -12,6 +12,7 @@
 The above command will install `django` and register it at `dependencies` in `project.json` file.
 
 For installing development dependencies pass `-d` or `--dev` flag.
+
 `pipx install -d pytest`
 
 The above command will install `pytest` and register it at `dev-dependencies` in `project.json` file.
@@ -23,6 +24,7 @@ The above command will install `pytest` and register it at `dev-dependencies` in
 `pipx update django`
 
 For updating development package pass `-d` or `--dev` flag.
+
 `pipx update -d pytest`
 
 ### Setup a project
@@ -32,4 +34,4 @@ Issue `setup` without any flags during deployment. The command will install all 
 
 If the setup is for development, pass `-d` or `--dev` flag. This will install packages in both `dependencies` and `dev-dependencies` sections.
 
-`pipx setup -d`
+`pipx -d setup`
