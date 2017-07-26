@@ -4,10 +4,8 @@ import json
 
 from setuptools import find_packages
 from pip.commands import InstallCommand, UninstallCommand
+import pip
 from pkg_resources import get_distribution
-
-# pip.main(["install", "--upgrade", "--no-index", "--find-links=.", package])
-
 
 PROJECT_FILE="project.json"
 DEFAULT_STRUCT = {"dependencies": [], "dev-dependencies": []}
@@ -55,25 +53,39 @@ def deregister_dependency(pkg):
 			continue
 	update_project_file(data)
 
-def install(pkgs, update=False, register=True):
-	dev = False
-	if "-d" in pkgs or "--dev" in pkgs:
-		dev = True
-	c = InstallCommand()
-	for pkg in pkgs:
-		if pkg in ["-d", "--dev"]:
-			continue
-		args = [pkg]
-		if update:
-			args.append("--upgrade")
+def separate_packages_n_options(command, args):
+	_, packages = command.parse_args(args)
+	return list(set(args).difference(set(packages))), packages
 
-		if c.main(args) == 0 and register:
+def install(args, update=False, register=True):
+	c = InstallCommand()
+	dev = False
+	try:
+		dev_option_index = args.index("-d") or args.index("--dev")
+		dev = True
+		args.pop(dev_option_index)
+	except ValueError:
+		pass
+
+	options, packages = separate_packages_n_options(c, args)
+	for pkg in packages:
+		if pkg == "install":
+			continue
+		per_package_args = [pkg] + options
+		if update:
+			per_package_args.append("--upgrade")
+
+		if c.main(per_package_args) == 0 and register:
 			register_dependency(pkg, dev=dev)
 
-def uninstall(pkgs):
+def uninstall(args):
 	c = UninstallCommand()
-	for pkg in pkgs:
-		if c.main([pkg]) == 0:
+	options, packages = separate_packages_n_options(c, args)
+	for pkg in packages:
+		if pkg == "uninstall":
+			continue
+		per_package_args = [pkg] + options
+		if c.main(per_package_args) == 0:
 			deregister_dependency(pkg)
 
 def update(pkgs):
@@ -119,8 +131,8 @@ COMMAND_MAP = \
 
 def main():
 	args = sys.argv[1:]
-	command = args.pop(0)
+	command = args[0]
 	try:
 		COMMAND_MAP[command](args)
 	except KeyError:
-		raise Exception("Unknown command '{}'".format(command))
+		pip.main(args)
