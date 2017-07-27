@@ -17,7 +17,8 @@ kwargs =  {
   "url": "https://github.com/janakitech/pipx",
   "entry_points": {
     "console_scripts": [
-      "pipx=pipx:main"
+      "pipx=pipx:main",
+      "px=pipx:main",
     ]
   },
   "description": "pip extended",
