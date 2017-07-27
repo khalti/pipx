@@ -27,4 +27,10 @@ test () {
 	py.test tests/*
 }
 
+publish () {
+	python setup.py bdist_wheel
+	twine upload dist/*
+}
+
+
 $@
