@@ -12,7 +12,7 @@ def read_file(filename):
 
 kwargs =  {
   "keywords": "pip",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "packages": find_packages(exclude=["tests"]),
   "url": "https://github.com/janakitech/pipx",
   "entry_points": {
@@ -27,7 +27,8 @@ kwargs =  {
   "name": "pipx",
   "license": read_file("license.txt"),
   "author_email": "sth.srn@gmail.com",
-  "author": "ludbek"
+  "author": "ludbek",
+	"include_package_data": True
 }
 
 setup(**kwargs)
