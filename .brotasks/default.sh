@@ -2,6 +2,13 @@
 
 project=$(basename `pwd`)
 
+setup () {
+	virtualenv --python=python3 .env
+	source .env/bin/activate
+	pip install pipx
+	px setup -d
+}
+
 init () {
 	bro setup_tmux
 	echo "Happy hacking !!!"
