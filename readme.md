@@ -1,3 +1,6 @@
+## Warning
+The package is not stable and actively maintained.
+
 ## Introduction
 `pipx` extends `pip` with ability to automatically register packages upon installation.
 
