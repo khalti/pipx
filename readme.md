@@ -1,5 +1,6 @@
-## Warning
-The package is not stable and actively maintained.
+## Deprecated
+The package has been deprecated. If one needs similar functionality try [poetry](https://github.com/sdispater/poetry).
+Also the name has been transferred to [pipx-app](https://github.com/pipxproject/pipx-app).
 
 ## Introduction
 `pipx` extends `pip` with ability to automatically register packages upon installation.
